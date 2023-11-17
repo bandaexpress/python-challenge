@@ -17,28 +17,25 @@ candidates_percentage = {}
 # Specify the column targeted for the candidate count.
 target_column = "Candidate"
 
-# Use a try block to faciliate exception handling in the event that there's an error opening or writing to the CSV file. The except will return an error.
-try:
-    # Open the CSV file and read its contents using csv.DictReader to skip the header row.
-    with open(csvpath, 'r') as file:
-        csv_reader = csv.DictReader(file)
+# Open the CSV file and read its contents using csv.DictReader to skip the header row.
+with open(csvpath, 'r') as file:
+    csv_reader = csv.DictReader(file)
     
-        # Process the rows in the election_data CSV file with a for loop.
-        for row in csv_reader:
-            # Count total votes.
-            total_votes = total_votes + 1
+    # Process the rows in the election_data CSV file with a for loop.
+    for row in csv_reader:
+        # Count total votes.
+        total_votes = total_votes + 1
 
-            # Extract the candidate information from the row by the Candidate column.
-            candidate = row["Candidate"]
+        # Extract the candidate information from the row by the Candidate column.
+        candidate = row["Candidate"]
 
-            # Update candidate votes count using the candidates_votes dictionary used to store the count of votes by candidate. 
-            # Retrieves the current count of votes for the candidate using .get using a default value of 0 if the candidate it not already in the dictionary and adding + 1 for each new candidate.
-            candidates_votes[candidate] = candidates_votes.get(candidate, 0) + 1
-    # Calculate percentage of votes for each candidate using a for loop in the candidate's name and the count of votes they received.
-    for candidate, votes in candidates_votes.items():
-        # Use the candidates_percentage dictionary to store the calculated percentage for each candidate.
-        candidates_percentage[candidate] = (votes / total_votes) * 100
-
+        # Update candidate votes count using the candidates_votes dictionary used to store the count of votes by candidate. 
+        # Retrieves the current count of votes for the candidate using .get using a default value of 0 if the candidate it not already in the dictionary and adding + 1 for each new candidate.
+        candidates_votes[candidate] = candidates_votes.get(candidate, 0) + 1
+        # Calculate percentage of votes for each candidate using a for loop in the candidate's name and the count of votes they received.
+        for candidate, votes in candidates_votes.items():
+            # Use the candidates_percentage dictionary to store the calculated percentage for each candidate.
+            candidates_percentage[candidate] = (votes / total_votes) * 100
     # Find the election winner based on most votes using max .get from candidate_votes dictionary.
     winner = max(candidates_votes, key=candidates_votes.get)
 
@@ -54,12 +51,7 @@ try:
         output_file.write("------------------\n")
         output_file.write(f"Winner: {winner}\n")
         output_file.write("------------------\n")
-          # Print a message in the terminal indicating that the results have been written to the file.
-    print(f"Results have been written to {output_file_path}")
-# Print a message in the terminal indicating that there was an error in opening or writing to the CSV file.
-except IOError as io_err:
-    print(f"Error opening the CSV file or writing to the results file: {io_err}")
-
+        
 # Print the analysis results in the terminal.
 print("Election Results")
 print("------------------")

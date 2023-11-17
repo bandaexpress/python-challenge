@@ -22,41 +22,40 @@ changes = []
 greatest_increase = {"date": "", "amount": float("-inf")}
 greatest_decrease = {"date": "", "amount": float("inf")}
 
-# Use a try block to faciliate exception handling in the event that there's an error opening or writing to the CSV file. The except will return an error.
-try:
-    # Open the CSV file and read its contents.
-    with open(csvpath, 'r') as file:
-        csv_reader = csv.reader(file)
 
-        # Skip the header row.
-        header = next(csv_reader)
+# Open the CSV file and read its contents.
+with open(csvpath, 'r') as file:
+    csv_reader = csv.reader(file)
 
-        # Process the rows in the budget_data CSV file with a for loop.
-        for row in csv_reader:
-            # Extract date from starting value at index 0 (column 1) and extract profit/loss value at index 1 (column 2), using an integer conversion because the profit_loss value is numeric.
-            date = row[0]
-            profit_loss = int(row[1])
+    # Skip the header row.
+    header = next(csv_reader)
 
-            # Update total months using +1 to count and calculate the net total.
-            total_months = total_months + 1
-            net_total = net_total + profit_loss
+    # Process the rows in the budget_data CSV file with a for loop.
+    for row in csv_reader:
+        # Extract date from starting value at index 0 (column 1) and extract profit/loss value at index 1 (column 2), using an integer conversion because the profit_loss value is numeric.
+        date = row[0]
+        profit_loss = int(row[1])
 
-            # Calculate the change in profit/loss using previous_profit_loss and append the changes to the changes dictionary.
-            change = profit_loss - previous_profit_loss
-            changes.append(change)
+        # Update total months using +1 to count and calculate the net total.
+        total_months = total_months + 1
+        net_total = net_total + profit_loss
 
-            # Update greatest increase and decrease by using an if statement to check if each row has a change that is greater or less than the previously defined greatest increase and decrease. 
-            # If the row has a change that is greater than the presently established greatest increase, then the selected row will be set as the greatest increase date, along with its corresponding change amount.
-            if change > greatest_increase["amount"]:
-                greatest_increase["date"] = date
-                greatest_increase["amount"] = change
-            # If the row has a change that is less than the presently established greatest decrease, then the selected row will be set as the greatest decrease date, along with its corresponding change amount.
-            if change < greatest_decrease["amount"]:
-                greatest_decrease["date"] = date
-                greatest_decrease["amount"] = change
+        # Calculate the change in profit/loss using previous_profit_loss and append the changes to the changes dictionary.
+        change = profit_loss - previous_profit_loss
+        changes.append(change)
 
-            # Update previous profit/loss for the next iteration to enable the greatest increase and decrease calculation.
-            previous_profit_loss = profit_loss
+        # Update greatest increase and decrease by using an if statement to check if each row has a change that is greater or less than the previously defined greatest increase and decrease. 
+        # If the row has a change that is greater than the presently established greatest increase, then the selected row will be set as the greatest increase date, along with its corresponding change amount.
+        if change > greatest_increase["amount"]:
+            greatest_increase["date"] = date
+            greatest_increase["amount"] = change
+        # If the row has a change that is less than the presently established greatest decrease, then the selected row will be set as the greatest decrease date, along with its corresponding change amount.
+        if change < greatest_decrease["amount"]:
+            greatest_decrease["date"] = date
+            greatest_decrease["amount"] = change
+
+        # Update previous profit/loss for the next iteration to enable the greatest increase and decrease calculation.
+        previous_profit_loss = profit_loss
 
     # Calculate the average change from the changes list using the sum of the changes, excluding the first row, divided by total months -1 to exclude the first month which does not have a previous month for comparison.
     average_change = sum(changes[1:]) / (total_months - 1)
@@ -72,11 +71,6 @@ try:
         output_file.write(f"Average Change: ${average_change:.2f}\n")
         output_file.write(f"Greatest Increase in Profits: {greatest_increase['date']} (${greatest_increase['amount']})\n")
         output_file.write(f"Greatest Decrease in Profits: {greatest_decrease['date']} (${greatest_decrease['amount']})\n")
-  # Print a message in the terminal indicating that the results have been written to the file.
-    print(f"Results have been written to {output_file_path}")
-# Print a message in the terminal indicating that there was an error in opening or writing to the CSV file.
-except IOError as io_err:
-    print(f"Error opening the CSV file or writing to the results file: {io_err}")
 
 # Print the analysis results in the terminal.
 print("Financial Analysis")
